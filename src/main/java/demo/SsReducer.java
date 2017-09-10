@@ -32,7 +32,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class SsReducer extends Reducer<VisitKey, Text, Text, Text> {
 
     private static final Log _log = LogFactory.getLog(SsReducer.class);
-
+    private Text previousUrl = null;
     public void reduce(VisitKey key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         Text k = new Text(key.toString());
         int count = 0;
@@ -40,11 +40,31 @@ public class SsReducer extends Reducer<VisitKey, Text, Text, Text> {
         Iterator<Text> it = values.iterator();
         while (it.hasNext()) {
             Text v = new Text(it.next());
-            context.write(k, v);
+            if (previousUrl == null || previousUrl.compareTo(v) != 0) {
+                context.write(k, v);
+                previousUrl = v;
+            }
             _log.debug(k.toString() + " => " + v);
             count++;
         }
 
         _log.debug("count = " + count);
+
+        /*
+         Iterator<Text> it = values.iterator();
+            if (previousKey == null || comp.compare(previousKey, key) != 0) {
+                previousKey = key;
+                previousUrl = new Text(it.next());
+                time = 0L;
+            } else {
+                Text v = new Text(it.next());
+                time = time + (previousKey.getTimestamp() - key.getTimestamp());
+                if (previousUrl.compareTo(v) != 0) {
+                    context.write(new Text(key.getSymbol()+","+v), new Text(time.toString()));
+                    previousUrl = v;
+                    time = 0L;
+                }
+            }
+         */
     }
 }

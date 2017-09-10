@@ -53,11 +53,9 @@ public class VisitKey implements WritableComparable<VisitKey> {
     @Override
     public String toString() {
         return (new StringBuilder())
-                .append('{')
                 .append(symbol)
-                .append(',')
+                .append('\t')
                 .append(timestamp)
-                .append('}')
                 .toString();
     }
 

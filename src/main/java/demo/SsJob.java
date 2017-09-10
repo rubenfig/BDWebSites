@@ -51,7 +51,7 @@ public class SsJob extends Configured implements Tool {
 
         job.setJarByClass(SsJob.class);
         job.setPartitionerClass(NaturalKeyPartitioner.class);
-        job.setGroupingComparatorClass(NaturalKeyGroupingComparator.class);
+        job.setGroupingComparatorClass(CompositeKeyComparator.class);
         job.setSortComparatorClass(CompositeKeyComparator.class);
 
         job.setMapOutputKeyClass(VisitKey.class);
