@@ -39,7 +39,7 @@ public class FinalReducer extends Reducer<LongWritable, Text, Text, Text> {
         //to get the total occurances of a word
         while (valuesIt.hasNext()) {
             Text l = valuesIt.next();
-            context.write(new Text(count + " - " + l), new Text(key.toString()));
+            context.write(new Text(l + "," + key), new Text(String.valueOf(count)));
             count++;
         }
 

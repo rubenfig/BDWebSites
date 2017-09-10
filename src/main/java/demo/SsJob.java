@@ -90,6 +90,7 @@ public class SsJob extends Configured implements Tool {
 
         job2.waitForCompletion(true);
 
+        conf.set("mapred.textoutputformat.separator", ",");
 
         Job job3 = new Job(conf, "listado final");
         job3.setJarByClass(SsJob.class);
