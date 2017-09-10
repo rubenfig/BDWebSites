@@ -19,6 +19,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -47,7 +48,7 @@ public class SsJob extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
-        Job job = new Job(conf, "secondary sort");
+        Job job = new Job(conf, "sort de timestamp y usuarios");
 
         job.setJarByClass(SsJob.class);
         job.setPartitionerClass(NaturalKeyPartitioner.class);
@@ -72,7 +73,23 @@ public class SsJob extends Configured implements Tool {
         out.getFileSystem(conf).delete(out);
         job.waitForCompletion(true);
 
-        return 0;
+
+        Job job2 = new Job(conf, "promedio");
+        job2.setJarByClass(SsJob.class);
+
+        job2.setMapperClass(PromedioMapper.class);
+        job2.setReducerClass(PromedioCombiner.class);
+
+        job2.setOutputKeyClass(Text.class);
+        job2.setOutputValueClass(LongWritable.class);
+
+        job2.setInputFormatClass(TextInputFormat.class);
+        job2.setOutputFormatClass(TextOutputFormat.class);
+
+        TextInputFormat.addInputPath(job2, new Path(args[1] + "/part-r-00000"));
+        TextOutputFormat.setOutputPath(job2, new Path(args[1] + "/real-output"));
+
+        return job2.waitForCompletion(true) ? 0 : 1;
     }
 
 }
