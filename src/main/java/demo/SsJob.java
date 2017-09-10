@@ -18,7 +18,6 @@ package demo;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -78,18 +77,39 @@ public class SsJob extends Configured implements Tool {
         job2.setJarByClass(SsJob.class);
 
         job2.setMapperClass(PromedioMapper.class);
-        job2.setReducerClass(PromedioCombiner.class);
+        job2.setReducerClass(PromedioReducer.class);
 
         job2.setOutputKeyClass(Text.class);
         job2.setOutputValueClass(LongWritable.class);
 
         job2.setInputFormatClass(TextInputFormat.class);
         job2.setOutputFormatClass(TextOutputFormat.class);
-
+        Path out2 = new Path(args[1] + "/temp");
         TextInputFormat.addInputPath(job2, new Path(args[1] + "/part-r-00000"));
-        TextOutputFormat.setOutputPath(job2, new Path(args[1] + "/real-output"));
+        TextOutputFormat.setOutputPath(job2, out2);
 
-        return job2.waitForCompletion(true) ? 0 : 1;
+        job2.waitForCompletion(true);
+
+
+        Job job3 = new Job(conf, "listado final");
+        job3.setJarByClass(SsJob.class);
+
+        job3.setMapperClass(Map.class);
+        job3.setReducerClass(FinalReducer.class);
+        job3.setSortComparatorClass(ViewsDescComparator.class);
+
+        job3.setOutputKeyClass(LongWritable.class);
+        job3.setOutputValueClass(Text.class);
+
+        job3.setInputFormatClass(TextInputFormat.class);
+        job3.setOutputFormatClass(TextOutputFormat.class);
+        Path out3 = new Path(args[1] + "/real-output");
+        TextInputFormat.addInputPath(job3, new Path(out2 + "/part-r-00000"));
+        TextOutputFormat.setOutputPath(job3, out3);
+        out.getFileSystem(conf).delete(out3);
+        job3.waitForCompletion(true);
+        out.getFileSystem(conf).delete(out2);
+        return 0;
     }
 
 }

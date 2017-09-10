@@ -27,18 +27,19 @@ import java.util.Iterator;
  *
  * @author Jee Vang
  */
-public class PromedioReducer extends Reducer<LongWritable, LongWritable, LongWritable, Text> {
+public class PromedioReducer extends Reducer<Text, LongWritable, LongWritable, Text> {
 
     public void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
 
         Long sum = 0L;
         Integer count = 0;
-        Iterator valuesIt = values.iterator();
+        Iterator<LongWritable> valuesIt = values.iterator();
 
         //For each key value pair, get the value and adds to the sum
         //to get the total occurances of a word
         while (valuesIt.hasNext()) {
-            sum = sum + (Long) valuesIt.next();
+            LongWritable l = valuesIt.next();
+            sum = sum + l.get();
             count++;
         }
 

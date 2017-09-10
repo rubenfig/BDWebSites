@@ -27,24 +27,24 @@ import java.util.Iterator;
  *
  * @author Jee Vang
  */
-public class PromedioCombiner extends Reducer<Text, LongWritable, LongWritable, Text> {
+public class FinalReducer extends Reducer<LongWritable, Text, Text, Text> {
+    Integer count = 1;
 
-    public void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
+    public void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
-        Long sum = 0L;
-        Integer count = 0;
-        Iterator<LongWritable> valuesIt = values.iterator();
+
+        Iterator<Text> valuesIt = values.iterator();
 
         //For each key value pair, get the value and adds to the sum
         //to get the total occurances of a word
         while (valuesIt.hasNext()) {
-            LongWritable l = valuesIt.next();
-            sum = sum + l.get();
+            Text l = valuesIt.next();
+            context.write(new Text(count + " - " + l), new Text(key.toString()));
             count++;
         }
 
         //Writes the word and total occurances as key-value pair to the context
-        context.write(new LongWritable(sum / count), key);
+
 
     }
 }
