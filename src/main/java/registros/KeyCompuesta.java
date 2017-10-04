@@ -57,9 +57,9 @@ public class KeyCompuesta implements WritableComparable<KeyCompuesta> {
     public String toString() {
         return (new StringBuilder())
                 .append(diagnostico)
-                .append(',')
+                .append('_')
                 .append(fecha)
-                .append(',')
+                .append('_')
                 .append(departamento)
                 .toString();
     }
@@ -123,11 +123,11 @@ public class KeyCompuesta implements WritableComparable<KeyCompuesta> {
      * @return Departamento. i.e. the number of milliseconds since January 1, 1970, 00:00:00 GMT
      */
     public String getDepartamento() {
-        return fecha;
+        return departamento;
     }
 
     public void setDepartamento(String fecha) {
-        this.fecha = fecha;
+        this.departamento = departamento;
     }
 
 }

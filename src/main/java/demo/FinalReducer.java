@@ -15,6 +15,11 @@
  */
 package demo;
 
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.TableReducer;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -27,11 +32,12 @@ import java.util.Iterator;
  *
  * @author Jee Vang
  */
-public class FinalReducer extends Reducer<LongWritable, Text, Text, Text> {
+public class FinalReducer extends
+        TableReducer<ImmutableBytesWritable, Text,
+                ImmutableBytesWritable> {
     Integer count = 1;
 
-    public void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-
+    public void reduce(ImmutableBytesWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
         Iterator<Text> valuesIt = values.iterator();
 
@@ -39,7 +45,11 @@ public class FinalReducer extends Reducer<LongWritable, Text, Text, Text> {
         //to get the total occurances of a word
         while (valuesIt.hasNext()) {
             Text l = valuesIt.next();
-            context.write(new Text(l + "," + key), new Text(String.valueOf(count)));
+            // Put to HBase
+            Put put = new Put(key.get());
+            put.add(Bytes.toBytes("data"), Bytes.toBytes("promedio"),
+                    Bytes.toBytes(l.toString()));
+            context.write(key, put);
             count++;
         }
 
@@ -47,4 +57,5 @@ public class FinalReducer extends Reducer<LongWritable, Text, Text, Text> {
 
 
     }
+
 }
