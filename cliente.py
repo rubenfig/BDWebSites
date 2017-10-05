@@ -10,7 +10,7 @@ fecha = raw_input("Ingrese la fecha: ")
 queryHbase = "b'" + diagnostico + "_" + fecha + "_" + departamento + "'"
 
 connection = happybase.Connection('localhost')
-table = connection.table('view')
+table = connection.table('enfermedad_dpto')
 row = table.row(queryHbase)
 resultHbase = row[b'cantidad:']
 # print(row[b'cantidad:'])  # prints 'value1'

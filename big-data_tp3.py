@@ -5,13 +5,13 @@ import psycopg2
 
 
 fileName = raw_input("Ingrese el nombre del archivo fuente: ")
-pathFileName = '/home/carlitos/Descargas/bigdata/'
+pathFileName = '/home/hduser/bigdata/'
 pathDatos = pathFileName + fileName
 
-#pathDatos = '/home/hduser/Descargas/bigdata/bigdata-setdata.csv'
-#pathNewDatos = '/home/hduser/Descargas/bigdata/data/'
-#pathDatos = '/home/carlitos/Descargas/bigdata/bigdata-setdata.csv'
-pathNewDatos = '/home/carlitos/Descargas/bigdata/data/'
+#pathDatos = '/home/hduser/bigdata/bigdata-setdata.csv'
+pathNewDatos = '/home/hduser/bigdata/data/'
+#pathDatos = '/home/carlitos/bigdata/bigdata-setdata.csv'
+#pathNewDatos = '/home/carlitos/bigdata/data/'
 
 try:
     conn = psycopg2.connect("dbname='bigdata' user='postgres' host='localhost' password='postgres'")
@@ -65,7 +65,7 @@ for row in reader:
     contador += 1
 
 # subprocess.call("/usr/local/hadoop/bin/hdfs dfs -mkdir /input/medicina", shell=True)
-# subprocess.call("/usr/local/hadoop/bin/hdfs dfs -put /home/hduser/Descargas/bigdata/data/ /input/medicina", shell=True)
+# subprocess.call("/usr/local/hadoop/bin/hdfs dfs -put /home/hduser/bigdata/data/ /input/medicina", shell=True)
 
 f.close()
 
