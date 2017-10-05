@@ -51,7 +51,7 @@ public class SsJob extends Configured implements Tool {
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
         conf.set("mapred.textoutputformat.separator", ",");
-
+        conf.set("mapreduce.input.fileinputformat.input.dir.recursive", "true");
         Job job = new Job(conf, "sort de fecha y usuarios");
 
         job.setJarByClass(SsJob.class);
