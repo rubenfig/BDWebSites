@@ -64,8 +64,8 @@ for row in reader:
 
     contador += 1
 
-# subprocess.call("/usr/local/hadoop/bin/hdfs dfs -mkdir /input/medicina", shell=True)
-# subprocess.call("/usr/local/hadoop/bin/hdfs dfs -put /home/hduser/bigdata/data/ /input/medicina", shell=True)
+subprocess.call("/usr/local/hadoop/bin/hdfs dfs -mkdir /input/medicina", shell=True)
+subprocess.call("/usr/local/hadoop/bin/hdfs dfs -put /home/hduser/bigdata/data/ /input/medicina", shell=True)
 
 f.close()
 
