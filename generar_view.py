@@ -12,6 +12,6 @@ try:
     cur.execute(queryDropTable)
 except:
     print "No exite la tabla"
-subprocess.call("echo \"disable 'enfermedad_dpto'; drop 'enfermedad_dpto'; create 'enfermedad_dpto','cantidad'\" | hbase-1.3.1/bin/hbase shell", shell=True)
-subprocess.call("hadoop jar WebSites-1.0-SNAPSHOT.jar registros.SsJob /input/medicina/* /output/medicina", shell=True)
+subprocess.call("echo \"disable 'enfermedad_dpto'; drop 'enfermedad_dpto'; create 'enfermedad_dpto','cantidad'\" | ~/hbase-1.3.1/bin/hbase shell", shell=True)
+subprocess.call("/usr/local/hadoop/bin/hadoop jar WebSites-1.0-SNAPSHOT.jar registros.SsJob /input/medicina/* /output/medicina", shell=True)
 subprocess.call("~/hbase-1.3.1/bin/hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=,  -Dimporttsv.columns=\"HBASE_ROW_KEY,cantidad\" enfermedad_dpto hdfs:///output/medicina/part-r-00000", shell=True)
