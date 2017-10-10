@@ -2,6 +2,8 @@ import csv
 import sys
 import subprocess
 import psycopg2
+from cStringIO import StringIO
+
 
 fileName = raw_input("Ingrese el nombre del archivo fuente: ")
 #pathFileName = '/home/carlitos/Descargas/bigdata/'
@@ -33,10 +35,16 @@ try:
     contador = 0
     for row in reader:
         if contador != 0:
-            subprocess.call("mkdir " + pathNewDatos + row[0], shell=True)
-            with open(pathNewDatos + row[0] + '/' + row[0] + '.csv', 'a+') as newCSV:
-                wr = csv.writer(newCSV, quoting=csv.QUOTE_NONE, escapechar='\\')
-                wr.writerow(row)
+            data = StringIO()
+            wr = csv.writer(data, quoting=csv.QUOTE_NONE, escapechar='\\')
+            wr.writerow(row)
+            result = subprocess.call("/usr/local/hadoop/bin/hdfs dfs -mkdir /input/medicina/" + row[0], shell=True)
+            if result == 0:
+                    subprocess.call("echo '"+ data.getvalue().replace("\n", "") +"' | /usr/local/hadoop/bin/hdfs dfs -put - /input/medicina/" + row[0] + "/" + row[0] + ".csv", shell=True)
+            else:
+                subprocess.call("echo '"+ data.getvalue().replace("\n", "") +"' | /usr/local/hadoop/bin/hdfs dfs -appendToFile - /input/medicina/" + row[0] + "/" + row[0] + ".csv", shell=True)
+
+
 
             # Para agregar a la BD relacional
             try:
@@ -60,9 +68,6 @@ try:
                 print "I can't update our test database!"
 
         contador += 1
-
-    subprocess.call("/usr/local/hadoop/bin/hdfs dfs -mkdir /input/medicina", shell=True)
-    subprocess.call("/usr/local/hadoop/bin/hdfs dfs -put /home/hduser/bigdata/data/ /input/medicina", shell=True)
 
     f.close()
 except Exception as e:
